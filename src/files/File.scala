@@ -6,6 +6,8 @@ class File(override val parentPath : String , override val name: String, content
   override def asDirectory: Directory = throw new FileSystemException("A file canot converted to a directory!")
 
   override def asFile: File = this
+  override def isDirectory: Boolean = false
+  override def isFile: Boolean = true
 
   def getType: String = "File"
 
