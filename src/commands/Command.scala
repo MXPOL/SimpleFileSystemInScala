@@ -2,8 +2,7 @@ package commands
 
 import filessystem.State
 
-trait Command {
-  def apply(state:State) : State
+trait Command extends (State => State){
 }
 
 object Command{
@@ -18,30 +17,33 @@ object Command{
   def emptyCommand:Command = new Command {
     override def apply(state: State): State = state
   }
-  def incomplereCommand(name:String) = new Command {
+  def incompleteCommand(name:String) = new Command {
     override def apply(state: State): State = state.setMessage(name +" :incomplete command!")
   }
   def from(input:String) : Command ={
     val tokens : Array[String] = input.split(" ")
     if (input.isEmpty || tokens.isEmpty) emptyCommand
-    else if (MKDIR.equals(tokens(0))){
-      if (tokens.length < 2) incomplereCommand(MKDIR)
-      else new Mkdir(tokens(1))
-    } else if(LS.equals(tokens(0))){
-      new Ls
-    } else if(PWD.equals(tokens(0))){
-      new Pwd
-    }else if(TOUCH.equals(tokens(0))){
-      new Touch(tokens(1))
-    }else if(CD.equals(tokens(0))){
-      new Cd(tokens(1))
-    } else if (RM.equals(tokens(0))) {
-      if (tokens.length < 2) incomplereCommand(RM)
-      else new Rm(tokens(1))
-    } else if (ECHO.equals(tokens(0))) {
-      if (tokens.length < 2) incomplereCommand(ECHO)
-      else new Echo(tokens.tail)
+    else tokens(0) match {
+      case MKDIR =>
+        if (tokens.length < 2) incompleteCommand(MKDIR)
+        else new Mkdir(tokens(1))
+      case LS =>
+        new Ls
+      case PWD =>
+        new Pwd
+      case TOUCH =>
+        new Touch(tokens(1))
+      case CD =>
+        new Cd(tokens(1))
+      case RM =>
+        if (tokens.length < 2) incompleteCommand(RM)
+        else new Rm(tokens(1))
+      case ECHO =>
+        if (tokens.length < 2) incompleteCommand(ECHO)
+        else new Echo(tokens.tail)
+      case _ =>
+        new UnknownCommand
+
     }
-    else new UnknownCommand
   }
 }
