@@ -30,6 +30,7 @@ class Directory(override val parentPath: String , override val name: String, val
     new Directory(parentPath, name, contents.filter(e => !e.name.equals(entryName)) :+ newEntry)
 
   override def asDirectory: Directory = this
+  override def asFile: File = throw new FileSystemException("A directory cant be converted to a file")
 
   override def getType: String = "Directory"
 
